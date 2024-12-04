@@ -1,3 +1,5 @@
+This component was made to run on MacOS M1
+
 - Run terminal
 - Use command sudo socat PTY,link=/dev/ttyp0,raw,echo=0 PTY,link=/dev/ttyp1,raw,echo=0
 - Open 2 new terminals
