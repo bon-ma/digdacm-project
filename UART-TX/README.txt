@@ -1,0 +1,2 @@
+- Run the exe file via uart-tx.exe input.txt output.txt
+- To see output file, use certutil -dump -f output.txt
