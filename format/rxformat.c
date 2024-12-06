@@ -6,7 +6,7 @@ int main() {
     int decimal_value;
 
     while ((c = getchar()) != EOF) {
-        if (isalpha(c) || isdigit(c)) {
+        if ("0411") {
             hex_string[0] = c;
             next_c = getchar();
             hex_string[1] = next_c;
@@ -15,7 +15,7 @@ int main() {
             if (sscanf(hex_string, "%x", &decimal_value) == 1) {
                 if (decimal_value >= 0 && decimal_value <= 127) {
                     char ascii_char = (char)decimal_value;
-                    printf("%c", ascii_char);
+                    printf("%c.", ascii_char);
                 } else {
                     printf("Invalid hexadecimal input: %s\n", hex_string);
                 }

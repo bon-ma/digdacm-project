@@ -15,11 +15,11 @@ int main(int argc, char *argv[]) {
     }
     
 	else if (argc == 3 && strcmp(argv[1], "-i2") == 0 && strcmp(argv[2], "-o1") == 0) {
-		char x;
-		while ((x = fgetc(stdin)) != EOF) {
-       		fprintf(stdout, "%02X", x);
-    	}
-	}
+    char x;
+    while ((x = fgetc(stdin)) != EOF && x != '\n') {
+        fprintf(stdout, "%02X", x);
+    }
+}
 	
 	else if (argc == 5 && strcmp(argv[1], "-i1") == 0 && strcmp(argv[2], "-o2") == 0 && strcmp(argv[3], "-f") == 0) {
     	char *filename = argv[4];
@@ -29,16 +29,16 @@ int main(int argc, char *argv[]) {
     	while ((x = fgetc(file)) != EOF) {
         	if (isalpha(x)) {
             	if (prev_char != '\0' && !isalpha(prev_char)) {
-                	printf("&");
+                	printf("0411");
             	}
             	printf("%02X", x);
         	} else if (isdigit(x)) {
             	if (prev_char != '\0' && !isdigit(prev_char)) {
-                	printf("&");
+                	printf("0411");
             	}
             	printf("%02X", x);
         	} else {
-            	printf("&%02X", x);
+                printf("0411%02X", x);
        	 	}
         	prev_char = x;
     	}
@@ -48,19 +48,19 @@ int main(int argc, char *argv[]) {
 	else if (argc == 3 && strcmp(argv[1], "-i2") == 0 && strcmp(argv[2], "-o2") == 0) {
 		char x;
 		char prev_char = '\0';
-		while ((x = fgetc(stdin)) != EOF) {
+		while ((x = fgetc(stdin)) != EOF && x != '\n') {
        		if (isalpha(x)) {
             	if (prev_char != '\0' && !isalpha(prev_char)) {
-                	printf("&");
+                	printf("0411");
             	}
             	printf("%02X", x);
         	} else if (isdigit(x)) {
             	if (prev_char != '\0' && !isdigit(prev_char)) {
-                	printf("&");
+                	printf("0411");
             	}
             	printf("%02X", x);
         	} else {
-            	printf("&%02X", x);
+                printf("0411%02X", x);
        	 	}
         	prev_char = x;
     	}
