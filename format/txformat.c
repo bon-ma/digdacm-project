@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     
 	else if (argc == 3 && strcmp(argv[1], "-i2") == 0 && strcmp(argv[2], "-o1") == 0) {
     char x;
-    while ((x = fgetc(stdin)) != EOF && x != '\n') {
+    while ((x = fgetc(stdin)) != EOF) {
         fprintf(stdout, "%02X", x);
     }
 }
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
 	else if (argc == 3 && strcmp(argv[1], "-i2") == 0 && strcmp(argv[2], "-o2") == 0) {
 		char x;
 		char prev_char = '\0';
-		while ((x = fgetc(stdin)) != EOF && x != '\n') {
+		while ((x = fgetc(stdin)) != EOF) {
        		if (isalpha(x)) {
             	if (prev_char != '\0' && !isalpha(prev_char)) {
                 	printf("0411");
