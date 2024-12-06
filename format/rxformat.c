@@ -15,7 +15,7 @@ int main() {
             if (sscanf(hex_string, "%x", &decimal_value) == 1) {
                 if (decimal_value >= 0 && decimal_value <= 127) {
                     char ascii_char = (char)decimal_value;
-                    printf("%c.", ascii_char);
+                    printf("%c", ascii_char);
                 } else {
                     printf("Invalid hexadecimal input: %s\n", hex_string);
                 }
