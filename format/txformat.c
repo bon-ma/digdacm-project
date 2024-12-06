@@ -1,78 +1,75 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
-int main(int argc, char *argv[]) {
-	
-	char filename[100];
-	
-    if (argc == 5 && strcmp(argv[1], "-i1") == 0 && strcmp(argv[2], "-o1") == 0 && strcmp(argv[3], "-f") == 0) {
-		char *filename = argv[4];
-		char x;
-		FILE *file = fopen(filename, "r");
-		while ((x = fgetc(file)) != EOF) {
-       		fprintf(stdout, "%02X", x);
-    	}
-    	fclose(file);
+void hex_dump_file(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("fopen");
+        exit(EXIT_FAILURE);
     }
-    
-	else if (argc == 3 && strcmp(argv[1], "-i2") == 0 && strcmp(argv[2], "-o1") == 0) {
-    char x;
-    while ((x = fgetc(stdin)) != EOF) {
-        fprintf(stdout, "%02X", x);
+    int c;
+    while ((c = fgetc(file)) != EOF) {
+        printf("%02X", c);
+    }
+
+    fclose(file);
+}
+
+void hex_dump_word_based_input() {
+    int c;
+    while ((c = getchar()) != EOF) {
+        printf("%02X", c);
     }
 }
-	
-	else if (argc == 5 && strcmp(argv[1], "-i1") == 0 && strcmp(argv[2], "-o2") == 0 && strcmp(argv[3], "-f") == 0) {
-    	char *filename = argv[4];
-    	char x, prev_char = '\0';
-    	FILE *file = fopen(filename, "r");
 
-    	while ((x = fgetc(file)) != EOF) {
-        	if (isalpha(x)) {
-            	if (prev_char != '\0' && !isalpha(prev_char)) {
-                	printf("0411");
-            	}
-            	printf("%02X", x);
-        	} else if (isdigit(x)) {
-            	if (prev_char != '\0' && !isdigit(prev_char)) {
-                	printf("0411");
-            	}
-            	printf("%02X", x);
-        	} else {
-                printf("0411%02X", x);
-       	 	}
-        	prev_char = x;
-    	}
-    	fclose(file);
-	}
-    
-	else if (argc == 3 && strcmp(argv[1], "-i2") == 0 && strcmp(argv[2], "-o2") == 0) {
-		char x;
-		char prev_char = '\0';
-		while ((x = fgetc(stdin)) != EOF) {
-       		if (isalpha(x)) {
-            	if (prev_char != '\0' && !isalpha(prev_char)) {
-                	printf("0411");
-            	}
-            	printf("%02X", x);
-        	} else if (isdigit(x)) {
-            	if (prev_char != '\0' && !isdigit(prev_char)) {
-                	printf("0411");
-            	}
-            	printf("%02X", x);
-        	} else {
-                printf("0411%02X", x);
-       	 	}
-        	prev_char = x;
-    	}
-	}
-	
-	else {
-        printf("Incorrect usage. Please use:\n", argv[0]);
+void encode_file(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("fopen");
+        exit(EXIT_FAILURE);
+    }
+
+    int c;
+    while ((c = fgetc(file)) != EOF) {
+        if (isalnum(c)) {
+            printf("%02X", c);
+        } else {
+            printf("0411%02X", c);
+        }
+    }
+
+    fclose(file);
+}
+
+void encode_word_based_input() {
+    int c;
+    while ((c = getchar()) != EOF) {
+        if (isalnum(c)) {
+            printf("%02X", c);
+        } else {
+            printf("0411%02X", c);
+        }
+    }
+}
+
+int main(int argc, char *argv[]) {
+    if (argc == 5 && strcmp(argv[1], "-i1") == 0 && strcmp(argv[2], "-o1") == 0 && strcmp(argv[3], "-f") == 0) {
+        hex_dump_file(argv[4]);
+    } else if (argc == 3 && strcmp(argv[1], "-i2") == 0 && strcmp(argv[2], "-o1") == 0) {
+        hex_dump_word_based_input();
+    } else if (argc == 5 && strcmp(argv[1], "-i1") == 0 && strcmp(argv[2], "-o2") == 0 && strcmp(argv[3], "-f") == 0) {
+        encode_file(argv[4]);
+    } else if (argc == 3 && strcmp(argv[1], "-i2") == 0 && strcmp(argv[2], "-o2") == 0) {
+        encode_word_based_input();
+    } else {
+    	printf("Incorrect usage. Please use:\n", argv[0]);
         printf("%s -i1 -o1 -f [filename].txt\n", argv[0]);
         printf("%s -i1 -o2 -f [filename].txt\n", argv[0]);
         printf("type [filename].txt | %s -i2 -o1\n", argv[0]);
-        printf("type [filename].txt | %s -i2 -o2", argv[0]);   
+        printf("type [filename].txt | %s -i2 -o2", argv[0]);  
     }
-	
+
     return 0;
 }
