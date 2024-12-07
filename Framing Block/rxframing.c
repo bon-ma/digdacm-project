@@ -1,18 +1,33 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 
-#define MAX_SEQUENCE_NUMBER 1000  
-#define MAX_DATA_BLOCK_SIZE 2     
-#define MAX_BINARY_SEQUENCE 8000 
 
+#define CRC8_POLYNOMIAL 0x07
+#define MAX_BINARY_SEQUENCE 1000 * 8 
+#define MAX_SEQUENCE_NUMBER 1000     
+#define PAYLOAD_SIZE 2               
+#define FRAME_TYPE 1                 
+#define PREAMBLE "FF"                
 
-// Convert a binary string to its hexadecimal representation
-char* binaryToHexadecimal(const char* input) {
+// Function to calculate CRC-8
+uint8_t crc8(uint8_t *data, size_t len) {
+    uint8_t crc = 0;
+    for (size_t i = 0; i < len; i++) {
+        crc ^= data[i];
+        for (uint8_t bit = 0; bit < 8; bit++) {
+            crc = (crc & 0x80) ? (crc << 1) ^ CRC8_POLYNOMIAL : (crc << 1);
+        }
+    }
+    return crc;
+}
+
+// Convert binary string to hexadecimal
+char *binaryToHexadecimal(const char *input) {
     size_t binaryLength = strlen(input);
-    size_t hexLength = (binaryLength + 3) / 4; // Calculate the number of hexadecimal characters required
-    char* hexadecimal = (char*)malloc((hexLength + 1) * sizeof(char));
-
+    size_t hexLength = (binaryLength + 3) / 4;
+    char *hexadecimal = (char *)malloc(hexLength + 1);
     for (size_t i = 0; i < hexLength; i++) {
         int byte = 0;
         for (int j = 0; j < 4 && i * 4 + j < binaryLength; j++) {
@@ -20,61 +35,64 @@ char* binaryToHexadecimal(const char* input) {
         }
         sprintf(hexadecimal + i, "%X", byte);
     }
-    hexadecimal[hexLength] = '\0'; 
+    hexadecimal[hexLength] = '\0';
     return hexadecimal;
 }
 
-int main() {
-    char input[MAX_BINARY_SEQUENCE + 1]; 
+// Function to convert hexadecimal string to byte array
+void hexStringToBytes(const char *hexString, uint8_t *bytes, size_t len) {
+    for (size_t i = 0; i < len; i++) {
+        sscanf(hexString + 2 * i, "%2hhx", &bytes[i]);
+    }
+}
 
-    // Read binary input from stdin
+// Main 
+int main() {
+    char input[MAX_BINARY_SEQUENCE];
+    char result[20];
+    uint8_t frameBytes[18];
+    int sequence_number = 1;
+
+    // Input from stdin
     if (fgets(input, sizeof(input), stdin) == NULL) {
-        perror("Error reading input from stdin");
+        perror("Error reading input");
         return 1;
     }
 
-    // Remove trailing newline (if any)
+    
     input[strcspn(input, "\n")] = '\0';
 
     // Convert binary input to hexadecimal
-    char* hexadecimal = binaryToHexadecimal(input);
-    if (!hexadecimal) {
-        fprintf(stderr, "Error: Conversion to hexadecimal failed\n");
-        return 1;
-    }
+    char *hexadecimal = binaryToHexadecimal(input);
+    size_t hexLength = strlen(hexadecimal);
 
-    // Constants
-    const char preamble[] = "FF";
-    const int frame_type = 1;
-    const int payload_size = MAX_DATA_BLOCK_SIZE;
-    const int fcs = 0;
+    // Process hexadecimal data into frames
+    for (size_t i = 0; i < hexLength; i += PAYLOAD_SIZE) {
+        char payload[PAYLOAD_SIZE + 1] = {0};
+        size_t remaining = hexLength - i;
 
-    int sequence_number = 1;
-    size_t length = strlen(hexadecimal);
+        // Fill payload with up to PAYLOAD_SIZE characters
+        strncpy(payload, hexadecimal + i, remaining >= PAYLOAD_SIZE ? PAYLOAD_SIZE : remaining);
 
-    // Iterate through hexadecimal string in blocks of MAX_DATA_BLOCK_SIZE
-    for (size_t i = 0; i < length; i += MAX_DATA_BLOCK_SIZE) {
-        int remaining_chars = length - i; // Calculate remaining characters
+        // Construct frame
+        sprintf(result, "%s%04X%02X%04X%s0000", PREAMBLE, sequence_number, FRAME_TYPE, PAYLOAD_SIZE, payload);
 
-        // Print frame fields continuously
-        printf("%s%04X%02d%04d", preamble, sequence_number, frame_type, payload_size);
+        // Convert frame to bytes
+        size_t frameLen = strlen(result) / 2;
+        hexStringToBytes(result, frameBytes, frameLen - 1); 
 
-        
-        for (int j = 0; j < MAX_DATA_BLOCK_SIZE; j++) {
-            if (i + j < length) {
-                printf("%c", hexadecimal[i + j]);
-            } else {
-                printf("0"); 
-            }
-        }
+        // Calculate CRC-8 (FCS)
+        uint8_t fcs = crc8(frameBytes, frameLen - 1); 
+        sprintf(result + strlen(result) - 4, "%02X", fcs); 
+
+
+        printf("%s", result);
 
        
-        printf("%04d", fcs);
-
-     
         sequence_number = (sequence_number % MAX_SEQUENCE_NUMBER) + 1;
     }
 
-    free(hexadecimal); 
+   
+    free(hexadecimal);
     return 0;
 }
