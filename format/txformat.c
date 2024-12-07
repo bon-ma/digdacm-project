@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#define BUFFER_SIZE 1024
 
 void hex_dump_file(const char *filename) {
     FILE *file = fopen(filename, "r");
@@ -18,9 +19,26 @@ void hex_dump_file(const char *filename) {
 }
 
 void hex_dump_word_based_input() {
+    char buffer[BUFFER_SIZE];
+    int length = 0;
     int c;
-    while ((c = getchar()) != EOF) {
-        printf("%02X", c);
+    int last_char = EOF;
+    int is_echo = 0;
+    while ((c = getchar()) != EOF && length < BUFFER_SIZE - 1) {
+        buffer[length++] = c;
+        last_char = c;
+    }
+    buffer[length] = '\0';
+
+    if (last_char == '\n' && length < 50) {
+        is_echo = 1;
+        length--;
+    }
+	
+	int i =0;
+    
+    for (i; i < length; i++) {
+        printf("%02X", (unsigned char)buffer[i]);
     }
 }
 
@@ -44,12 +62,29 @@ void encode_file(const char *filename) {
 }
 
 void encode_word_based_input() {
+    char buffer[BUFFER_SIZE];
+    int length = 0;
     int c;
-    while ((c = getchar()) != EOF) {
-        if (isalnum(c)) {
-            printf("%02X", c);
+    int last_char = EOF;
+    int is_echo = 0;
+    
+    while ((c = getchar()) != EOF && length < BUFFER_SIZE - 1) {
+        buffer[length++] = c;
+        last_char = c;
+    }
+    buffer[length] = '\0';
+    if (last_char == '\n' && length < 50) {
+        is_echo = 1;
+        length--;
+    }
+    
+    int i = 0;
+
+    for (i; i < length; i++) {
+        if (isalnum(buffer[i])) {
+            printf("%02X", (unsigned char)buffer[i]);
         } else {
-            printf("0411%02X", c);
+            printf("0411%02X", (unsigned char)buffer[i]);
         }
     }
 }
