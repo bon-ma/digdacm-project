@@ -75,8 +75,6 @@ int main() {
             printf("%s", hexOutput);
         }
 
-        printf("\n"); // Newline between frames
-        sequence_number = (sequence_number + 1) % MAX_SEQUENCE_NUMBER;
     }
 
     return 0;
