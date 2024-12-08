@@ -11,22 +11,16 @@ const char* encodeTable[] =
     "11010", "11011", "11100", "11101"
 };
 
-// direct mapping
-void printMapping() 
+// direct mapping of binary
+void Mapping() 
 {
     const char* fourBits[] = 
 	{
-        "0000", "0001", "0010", "0011", // 0-4
-        "0100", "0101", "0110", "0111", // 5-8
-        "1000", "1001", "1010", "1011", // 9-12
-        "1100", "1101", "1110", "1111" //13 - 16
+        "0000", "0001", "0010", "0011", // 0-3
+        "0100", "0101", "0110", "0111", // 4-7
+        "1000", "1001", "1010", "1011", // 8-11
+        "1100", "1101", "1110", "1111" //12 - 15
     };
-
-//    printf("4-bit to 5-bit Mapping:\n"); //print
-//    int i;  
-//    for (i = 0; i < 16; i++) {  
-//    	printf("%s -> %s\n", fourBits[i], encodeTable[i]);
-//    }
 }
 
 // 4b/5b encoding 4->5 (direct mapping)
@@ -55,7 +49,7 @@ void mbnbEncode() {
     char tempInput[5] = {'\0'}; //  holding 4 bits as a string
     char encodedOutput[6];     
 
-    // read input from user input or piped input/ echo
+    // read input from piped input/ echo
     while ((input = getchar()) != EOF) { 
         if (input == '0' || input == '1') { 
             // append the bit to the tempInput array
@@ -72,13 +66,11 @@ void mbnbEncode() {
     // remaining bits when != multiple of 4 
     if (strlen(tempInput) > 0) {
         fprintf(stderr, "Input length is not a multiple of 4 (encoding).\n");
-        exit(1);
     }
 }
 
 // main function
 int main(int argc, char *argv[]) {
-//    printMapping(); //if print display output is needed
 
     
     mbnbEncode();  // encoder

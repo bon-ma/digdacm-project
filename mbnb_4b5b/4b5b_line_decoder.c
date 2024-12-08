@@ -4,10 +4,10 @@
 
 const char* decodeTable[] = 
 {
-    "0000", "0001", "0010", "0011", 
-    "0100", "0101", "0110", "0111",
-    "1000", "1001", "1010", "1011", 
-    "1100", "1101", "1110", "1111"
+    "0000", "0001", "0010", "0011", // 0-3
+    "0100", "0101", "0110", "0111", // 4-7
+    "1000", "1001", "1010", "1011", // 8-11
+    "1100", "1101", "1110", "1111"  // 12-15
 };
 
 // 4b5b decoding 5->4 (direct mapping) 
@@ -57,7 +57,6 @@ void mbnbDecode() {
     // remaining bits when != multiple of 5
     if (strlen(tempInput) > 0) {
         fprintf(stderr, "Input length is not a multiple of 5 (decoding).\n");
-        exit(1);
     }
 }
 
