@@ -20,11 +20,7 @@ void hex_dump_file(const char *filename) {
 void hex_dump_word_based_input() {
     char c;
     while ((c = getchar()) != EOF) {
-        if (c == '\n') {
-            // Handle newline character here, e.g., ignore it or print a specific output
-        } else {
             printf("%02X", c);
-        }
     }
 }
 
