@@ -19,26 +19,13 @@ void hex_dump_file(const char *filename) {
 }
 
 void hex_dump_word_based_input() {
-    char buffer[BUFFER_SIZE];
-    int length = 0;
-    int c;
-    int last_char = EOF;
-    int is_echo = 0;
-    while ((c = getchar()) != EOF && length < BUFFER_SIZE - 1) {
-        buffer[length++] = c;
-        last_char = c;
-    }
-    buffer[length] = '\0';
-
-    if (last_char == '\n' && length < 50) {
-        is_echo = 1;
-        length--;
-    }
-	
-	int i =0;
-    
-    for (i; i < length; i++) {
-        printf("%02X", (unsigned char)buffer[i]);
+    char c;
+    while ((c = getchar()) != EOF) {
+        if (c == '\n') {
+            // Handle newline character here, e.g., ignore it or print a specific output
+        } else {
+            printf("%02X", c);
+        }
     }
 }
 
@@ -62,29 +49,14 @@ void encode_file(const char *filename) {
 }
 
 void encode_word_based_input() {
-    char buffer[BUFFER_SIZE];
-    int length = 0;
     int c;
-    int last_char = EOF;
-    int is_echo = 0;
-    
-    while ((c = getchar()) != EOF && length < BUFFER_SIZE - 1) {
-        buffer[length++] = c;
-        last_char = c;
-    }
-    buffer[length] = '\0';
-    if (last_char == '\n' && length < 50) {
-        is_echo = 1;
-        length--;
-    }
-    
     int i = 0;
-
-    for (i; i < length; i++) {
-        if (isalnum(buffer[i])) {
-            printf("%02X", (unsigned char)buffer[i]);
+    
+    while ((c = getchar()) != EOF) {
+        if (isalnum(c)) {
+            printf("%02X", c);
         } else {
-            printf("0411%02X", (unsigned char)buffer[i]);
+            printf("0411%02X", c);
         }
     }
 }
