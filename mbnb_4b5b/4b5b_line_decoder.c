@@ -48,7 +48,7 @@ void mbnbDecode() {
 
             if (strlen(tempInput) == 5) { 
                 decode5b4b(tempInput, decodedOutput); // decode the 5-bit input
-                fputs(decodedOutput, stdout);         /`
+                fputs(decodedOutput, stdout);       
                 strcpy(tempInput, ""); // reset 
             }
         }
