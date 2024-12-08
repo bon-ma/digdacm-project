@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#define BUFFER_SIZE 1024
 
 void hex_dump_file(const char *filename) {
     FILE *file = fopen(filename, "r");
